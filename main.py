@@ -433,5 +433,30 @@ def update_tweet(tweet_id: UUID = Path(...), tweet: Tweet = Body(...)):
     summary="Delete a tweet",
     tags=["Tweets"],
 )
-def delete_tweet():
-    pass
+def delete_tweet(tweet_id: UUID = Path(...)):
+    """
+    Delete a tweet
+
+    This endpoint allows you to delete a tweet.
+
+    Parameters:
+    - Path parameters:
+        - tweet_id: UUID
+
+    Returns:
+    - Tweet: The deleted tweet with the following fields:
+        - tweet_id: UUID
+        - user_id: UUID
+        - content: str
+        - created_at: datetime
+        - updated_at: Optional[datetime]
+    """
+    with open("tweets.json", "r+", encoding="utf-8") as f:
+        tweets = json.loads(f.read())
+        for tweet_dict in tweets:
+            if tweet_dict["tweet_id"] == str(tweet_id):
+                tweets.remove(tweet_dict)
+                f.seek(0)
+                f.write(json.dumps(tweets, indent=4))
+                return Tweet(**tweet_dict)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tweet not found")
