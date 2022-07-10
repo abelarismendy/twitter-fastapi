@@ -1,13 +1,13 @@
 # Python
 from uuid import UUID
 from datetime import date, datetime
-from typing import Optional
+from typing import Optional, List
 
 # Pydantic
 from pydantic import BaseModel, EmailStr, Field
 
 # FastAPI
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 
 app = FastAPI()
 
@@ -48,8 +48,81 @@ class Tweet(BaseModel):
     created_at: datetime = Field(default=datetime.now())
     updated_at : Optional[datetime] = Field(default=None)
 
+
+# Routes
+
 @app.get(
     path="/",
 )
 def home():
     return {"message": "Hello World"}
+
+## Users
+
+@app.post(
+    path="/signup",
+    response_model=User,
+    status_code=status.HTTP_201_CREATED,
+    summary="Sign up a new user",
+    tags=["Users"],
+)
+def signup():
+    pass
+
+
+@app.post(
+    path="/login",
+    response_model=User,
+    status_code=status.HTTP_200_OK,
+    summary="Login a user",
+    tags=["Users"],
+)
+def login():
+    pass
+
+
+@app.get(
+    path="/users/",
+    response_model=List[User],
+    status_code=status.HTTP_200_OK,
+    summary="Get all users",
+    tags=["Users"],
+)
+def get_users():
+    pass
+
+
+@app.get(
+    path="/users/{user_id}",
+    response_model=User,
+    status_code=status.HTTP_200_OK,
+    summary="Get a user",
+    tags=["Users"],
+)
+def get_user():
+    pass
+
+
+@app.put(
+    path="/users/{user_id}",
+    response_model=User,
+    status_code=status.HTTP_200_OK,
+    summary="Update a user",
+    tags=["Users"],
+)
+def update_user():
+    pass
+
+
+@app.delete(
+    path="/users/{user_id}",
+    response_model=User,
+    status_code=status.HTTP_200_OK,
+    summary="Delete a user",
+    tags=["Users"],
+)
+def delete_user():
+    pass
+
+
+## Tweets
