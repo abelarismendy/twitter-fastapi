@@ -129,7 +129,22 @@ def login():
     tags=["Users"],
 )
 def get_users():
-    pass
+    """
+    Get all users
+
+    This endpoint allows you to get all users.
+
+    Returns:
+    - List[User]: A list of all users with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
+    with open("users.json", "r", encoding="utf-8") as f:
+        users = json.loads(f.read())
+        return [User(**user) for user in users]
 
 ### Get a user
 @app.get(
