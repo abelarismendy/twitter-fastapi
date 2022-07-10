@@ -59,6 +59,7 @@ def home():
 
 ## Users
 
+### Register a new user
 @app.post(
     path="/signup",
     response_model=User,
@@ -69,7 +70,7 @@ def home():
 def signup():
     pass
 
-
+### Login a user
 @app.post(
     path="/login",
     response_model=User,
@@ -80,7 +81,7 @@ def signup():
 def login():
     pass
 
-
+### Get all users
 @app.get(
     path="/users/",
     response_model=List[User],
@@ -91,7 +92,7 @@ def login():
 def get_users():
     pass
 
-
+### Get a user
 @app.get(
     path="/users/{user_id}",
     response_model=User,
@@ -102,7 +103,7 @@ def get_users():
 def get_user():
     pass
 
-
+### Update a user
 @app.put(
     path="/users/{user_id}",
     response_model=User,
@@ -113,7 +114,7 @@ def get_user():
 def update_user():
     pass
 
-
+### Delete a user
 @app.delete(
     path="/users/{user_id}",
     response_model=User,
@@ -126,3 +127,59 @@ def delete_user():
 
 
 ## Tweets
+
+### Get all tweets
+@app.get(
+    path="/tweets/",
+    response_model=List[Tweet],
+    status_code=status.HTTP_200_OK,
+    summary="Get all tweets",
+    tags=["Tweets"],
+)
+def get_tweets():
+    pass
+
+
+### Get a tweet
+@app.get(
+    path="/tweets/{tweet_id}",
+    response_model=Tweet,
+    status_code=status.HTTP_200_OK,
+    summary="Get a tweet",
+    tags=["Tweets"],
+)
+def get_tweet():
+    pass
+
+### Create a tweet
+@app.post(
+    path="/tweets/",
+    response_model=Tweet,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create a tweet",
+    tags=["Tweets"],
+)
+def create_tweet():
+    pass
+
+### Update a tweet
+@app.put(
+    path="/tweets/{tweet_id}",
+    response_model=Tweet,
+    status_code=status.HTTP_200_OK,
+    summary="Update a tweet",
+    tags=["Tweets"],
+)
+def update_tweet():
+    pass
+
+### Delete a tweet
+@app.delete(
+    path="/tweets/{tweet_id}",
+    response_model=Tweet,
+    status_code=status.HTTP_200_OK,
+    summary="Delete a tweet",
+    tags=["Tweets"],
+)
+def delete_tweet():
+    pass
