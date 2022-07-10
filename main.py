@@ -316,8 +316,34 @@ def get_tweets():
     summary="Get a tweet",
     tags=["Tweets"],
 )
-def get_tweet():
-    pass
+def get_tweet(tweet_id: UUID = Path(...)):
+    """
+    Get a tweet
+
+    This endpoint allows you to get a tweet.
+
+    Parameters:
+    - Path parameters:
+        - tweet_id: UUID
+
+    Returns:
+    - Tweet: The tweet with the following fields:
+        - tweet_id: UUID
+        - user_id: UUID
+        - content: str
+        - created_at: datetime
+        - updated_at: Optional[datetime]
+    """
+    with open(file="tweets.json", mode="r", encoding="utf-8") as f:
+        tweets = json.loads(f.read())
+        for tweet_dict in tweets:
+            if tweet_dict["tweet_id"] == str(tweet_id):
+                tweet_dict["tweet_id"] = str(tweet_id)
+                tweet_dict["user_id"] = str(tweet_dict["user_id"])
+                tweet_dict["created_at"] = str(tweet_dict["created_at"])
+                tweet_dict["updated_at"] = str(tweet_dict["updated_at"])
+                return Tweet(**tweet_dict)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Tweet not found")
 
 ### Create a tweet
 @app.post(
