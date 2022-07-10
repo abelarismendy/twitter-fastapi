@@ -42,6 +42,7 @@ class User(UserBase):
     birth_date : Optional[date] = Field(default=None)
 
 
+
 class UserRegister(PasswordMixin, User):
     pass
 
@@ -209,8 +210,37 @@ def get_user(user_id: UUID = Path(...)):
     summary="Update a user",
     tags=["Users"],
 )
-def update_user():
-    pass
+def update_user(user_id: UUID = Path(...), user: User = Body(...)):
+    """
+    Update a user
+
+    This endpoint allows you to update a user.
+
+    Parameters:
+    - Path parameters:
+        - user_id: UUID
+    - Request body:
+        - user: User
+
+    Returns:
+    - User: The updated user with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
+    with open("users.json", "r+", encoding="utf-8") as f:
+        users = json.loads(f.read())
+        for user_dict in users:
+            if user_dict["user_id"] == str(user_id):
+                user_dict.update(user.dict())
+                user_dict["user_id"] = str(user_id)
+                user_dict["birth_date"] = str(user_dict["birth_date"])
+                f.seek(0)
+                f.write(json.dumps(users, indent=4))
+                return User(**user_dict)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 ### Delete a user
 @app.delete(
@@ -220,8 +250,33 @@ def update_user():
     summary="Delete a user",
     tags=["Users"],
 )
-def delete_user():
-    pass
+def delete_user(user_id: UUID = Path(...)):
+    """
+    Delete a user
+
+    This endpoint allows you to delete a user.
+
+    Parameters:
+    - Path parameters:
+        - user_id: UUID
+
+    Returns:
+    - User: The deleted user with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
+    with open("users.json", "r+", encoding="utf-8") as f:
+        users = json.loads(f.read())
+        for user_dict in users:
+            if user_dict["user_id"] == str(user_id):
+                users.remove(user_dict)
+                f.seek(0)
+                f.write(json.dumps(users, indent=4))
+                return User(**user_dict)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 
 ## Tweets
