@@ -13,16 +13,19 @@ app = FastAPI()
 
 # Models
 
+class PasswordMixin(BaseModel):
+    password: str = Field(
+        ...,
+        min_length=8,
+        max_length=64,
+        example="password",
+    )
+
+
 class UserBase(BaseModel):
     user_id : UUID = Field(...)
     email : EmailStr = Field(...)
 
-class UserLogin(UserBase):
-    password : str = Field(
-        ...,
-        min_length=8,
-        max_length=64,
-    )
 
 class User(UserBase):
     first_name : str = Field(
@@ -36,6 +39,15 @@ class User(UserBase):
         max_length=50,
     )
     birth_date : Optional[date] = Field(default=None)
+
+
+class UserRegister(PasswordMixin, User):
+    pass
+
+
+class UserLogin(PasswordMixin, UserBase):
+    pass
+
 
 class Tweet(BaseModel):
     tweet_id : UUID = Field(...)
@@ -68,6 +80,23 @@ def home():
     tags=["Users"],
 )
 def signup():
+    """
+    Sign up a new user
+
+    This endpoint allows you to sign up a new user.
+
+    Parameters:
+    - Request body:
+        - user: UserRegister
+
+    Returns:
+    - User: The newly created user with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
     pass
 
 ### Login a user
