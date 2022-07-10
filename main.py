@@ -213,8 +213,35 @@ def get_tweet():
     summary="Create a tweet",
     tags=["Tweets"],
 )
-def create_tweet():
-    pass
+def create_tweet(tweet: Tweet = Body(...)):
+    """
+    Create tweet
+
+    This endpoint allows you to create a tweet.
+
+    Parameters:
+    - Request body:
+        - tweet: Tweet
+
+    Returns:
+    - Tweet: The newly created tweet with the following fields:
+        - tweet_id: UUID
+        - user_id: UUID
+        - content: str
+        - created_at: datetime
+        - updated_at: Optional[datetime]
+    """
+    with open("tweets.json", "r+", encoding="utf-8") as f:
+        tweets = json.loads(f.read())
+        tweet_dict = tweet.dict()
+        tweet_dict["tweet_id"] = str(tweet_dict["tweet_id"])
+        tweet_dict["user_id"] = str(tweet_dict["user_id"])
+        tweet_dict["created_at"] = str(tweet_dict["created_at"])
+        tweet_dict["updated_at"] = str(tweet_dict["updated_at"])
+        tweets.append(tweet_dict)
+        f.seek(0)
+        f.write(json.dumps(tweets, indent=4))
+        return tweet
 
 ### Update a tweet
 @app.put(
