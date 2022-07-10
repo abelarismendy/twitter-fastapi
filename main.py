@@ -8,7 +8,7 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 
 # FastAPI
-from fastapi import FastAPI, status, Body
+from fastapi import FastAPI, status, Body, HTTPException
 
 app = FastAPI()
 
@@ -117,8 +117,30 @@ def signup(user: UserRegister = Body(...)):
     summary="Login a user",
     tags=["Users"],
 )
-def login():
-    pass
+def login(user: UserLogin = Body(...)):
+    """
+    Login a user
+
+    This endpoint allows you to login a user.
+
+    Parameters:
+    - Request body:
+        - user: UserLogin
+
+    Returns:
+    - User: The logged in user with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
+    with open("users.json", "r+", encoding="utf-8") as f:
+        users = json.loads(f.read())
+        for user_dict in users:
+            if user_dict["email"] == user.email and user_dict["password"] == user.password:
+                return User(**user_dict)
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
 ### Get all users
 @app.get(
@@ -191,7 +213,22 @@ def delete_user():
     tags=["Tweets"],
 )
 def get_tweets():
-    pass
+    """
+    Get all tweets
+
+    This endpoint allows you to get all tweets.
+
+    Returns:
+    - List[Tweet]: A list of all tweets with the following fields:
+        - tweet_id: UUID
+        - user_id: UUID
+        - content: str
+        - created_at: datetime
+        - updated_at: Optional[datetime]
+    """
+    with open("tweets.json", "r", encoding="utf-8") as f:
+        tweets = json.loads(f.read())
+        return [Tweet(**tweet) for tweet in tweets]
 
 
 ### Get a tweet
