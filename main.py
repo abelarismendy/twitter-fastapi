@@ -8,7 +8,7 @@ from typing import Optional, List
 from pydantic import BaseModel, EmailStr, Field
 
 # FastAPI
-from fastapi import FastAPI, status, Body, HTTPException
+from fastapi import FastAPI, status, Body, HTTPException, Path
 
 app = FastAPI()
 
@@ -176,8 +176,30 @@ def get_users():
     summary="Get a user",
     tags=["Users"],
 )
-def get_user():
-    pass
+def get_user(user_id: UUID = Path(...)):
+    """
+    Get a user
+
+    This endpoint allows you to get a user.
+
+    Parameters:
+    - Path parameters:
+        - user_id: UUID
+
+    Returns:
+    - User: The user with the following fields:
+        - user_id: UUID
+        - email: EmailStr
+        - first_name: str
+        - last_name: str
+        - birth_date: Optional[date]
+    """
+    with open("users.json", "r", encoding="utf-8") as f:
+        users = json.loads(f.read())
+        for user_dict in users:
+            if user_dict["user_id"] == str(user_id):
+                return User(**user_dict)
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
 ### Update a user
 @app.put(
